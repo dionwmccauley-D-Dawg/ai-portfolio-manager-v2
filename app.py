@@ -24,8 +24,8 @@ if st.sidebar.button("Run Agent Simulation"):
             API_KEY = "2wYY9NCVMK5pUlYsAzqHqOZqudpS9NCM"
             TICKERS = ['SPY', 'QQQ', 'VTI', 'VXUS', 'BND']
             SMA_WINDOW = 200
-            STRONG_TILT = 0.40   # Aggressive overweight for winners
-            WEAK_TILT = -0.25    # Stronger underweight for losers
+            STRONG_TILT = 0.40
+            WEAK_TILT = -0.25
             MIN_WEIGHT = 0.05
             MIN_EQUITY_PCT = 0.60
 
@@ -50,7 +50,7 @@ if st.sidebar.button("Run Agent Simulation"):
                 df['date'] = pd.to_datetime(df['timestamp'], unit='ms')
                 df.set_index('date', inplace=True)
                 prices[ticker] = df['close']
-                time.sleep(15)  # Rate limit safety
+                time.sleep(15)
 
             price_df = pd.DataFrame(prices).ffill().dropna(how='all')
             st.success(f"Live data loaded: {len(price_df)} days")
@@ -60,7 +60,6 @@ if st.sidebar.button("Run Agent Simulation"):
             current = price_df.iloc[-1]
             signals = current > sma
 
-            # Apply aggressive tilt
             base_weight = 1.0 / len(TICKERS)
             weights = {}
             equity_sum = 0
@@ -81,17 +80,17 @@ if st.sidebar.button("Run Agent Simulation"):
             total = sum(weights.values())
             weights = {k: v / total for k, v in weights.items()}
 
-            # Display dynamic allocation
+            # Allocation table
             st.subheader("Dynamic Allocation (Momentum Tilted)")
             alloc_df = pd.DataFrame({
                 "Ticker": list(weights.keys()),
-                "Momentum Signal": ["Strong" if signals.get(t, False) else "Weak" for t in weights.keys()],
+                "Signal": ["Strong" if signals.get(t, False) else "Weak" for t in weights.keys()],
                 "Weight": [f"{w:.1%}" for w in weights.values()],
                 "Amount": [f"${capital * w:,.0f}" for w in weights.values()]
             })
             st.table(alloc_df)
 
-            # Performance estimate from historical data
+            # Performance estimate
             daily_ret = price_df.pct_change().mean() * 252
             ann_ret = daily_ret.mean()
             ann_vol = price_df.pct_change().std() * np.sqrt(252)
@@ -103,10 +102,10 @@ if st.sidebar.button("Run Agent Simulation"):
             col2.metric("Volatility", f"{ann_vol.mean():.1%}")
             col3.metric("Sharpe Ratio", f"{sharpe:.2f}")
 
-            # Backtest plot (displayed directly)
+            # Backtest plot (displayed)
             st.subheader("Backtest Comparison (Cumulative Growth of $1)")
             fig, ax = plt.subplots(figsize=(10, 6))
-            # Placeholder lines (replace with real backtest later)
+            # Placeholder (replace with real backtest later)
             ax.plot([1, 1.1692], label="Momentum Tilted", color='orange')
             ax.plot([1, 1.1585], label="Equal Weight", color='blue')
             ax.legend()
@@ -116,5 +115,5 @@ if st.sidebar.button("Run Agent Simulation"):
             st.success("Agent simulation complete. Market monitored for rebalance.")
 
         except Exception as e:
-            st.error(f"Agent error: {str(e)}")
-            st.info("Check API key, rate limits, or try again in a few minutes.")
+            st.error(f"Error: {str(e)}")
+            st.info("Try again in a few minutes or check rate limits/API key.")
