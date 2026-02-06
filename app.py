@@ -60,6 +60,7 @@ if st.sidebar.button("Run Agent Simulation"):
             current = price_df.iloc[-1]
             signals = current > sma
 
+            # Apply aggressive tilt
             base_weight = 1.0 / len(TICKERS)
             weights = {}
             equity_sum = 0
@@ -105,7 +106,7 @@ if st.sidebar.button("Run Agent Simulation"):
             # Backtest plot (displayed)
             st.subheader("Backtest Comparison (Cumulative Growth of $1)")
             fig, ax = plt.subplots(figsize=(10, 6))
-            # Placeholder (replace with real backtest later)
+            # Placeholder lines (replace with real backtest later)
             ax.plot([1, 1.1692], label="Momentum Tilted", color='orange')
             ax.plot([1, 1.1585], label="Equal Weight", color='blue')
             ax.legend()
