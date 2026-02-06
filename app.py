@@ -103,10 +103,10 @@ if st.sidebar.button("Run Agent Simulation"):
             col2.metric("Volatility", f"{ann_vol.mean():.1%}")
             col3.metric("Sharpe Ratio", f"{sharpe:.2f}")
 
-            # Backtest plot (displayed)
+            # Backtest plot (displayed in app)
             st.subheader("Backtest Comparison (Cumulative Growth of $1)")
             fig, ax = plt.subplots(figsize=(10, 6))
-            # Placeholder lines (replace with real backtest later)
+            # Placeholder lines - replace with real backtest data later
             ax.plot([1, 1.1692], label="Momentum Tilted", color='orange')
             ax.plot([1, 1.1585], label="Equal Weight", color='blue')
             ax.legend()
