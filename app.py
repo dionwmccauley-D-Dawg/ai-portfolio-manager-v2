@@ -83,13 +83,13 @@ if st.sidebar.button("Run Agent Simulation"):
             total = sum(weights.values())
             weights = {k: v / total for k, v in weights.items()}
 
-            # Calculate exact whole shares and leftover cash
+            # Calculate exact shares and leftover
             shares = {}
             invested = 0
             for ticker in TICKERS:
                 price = current_prices[ticker]
-                target_amount = capital * weights[ticker]
-                share_count = np.floor(target_amount / price)  # whole shares only
+                amount = capital * weights[ticker]
+                share_count = np.floor(amount / price)  # whole shares only
                 shares[ticker] = int(share_count)
                 invested += share_count * price
 
@@ -125,7 +125,7 @@ if st.sidebar.button("Run Agent Simulation"):
             # Backtest plot (displayed)
             st.subheader("Backtest Comparison (Cumulative Growth of $1)")
             fig, ax = plt.subplots(figsize=(10, 6))
-            # Placeholder lines (upgrade to real backtest later)
+            # Placeholder lines (upgrade to real data later)
             ax.plot([1, 1.1692], label="Momentum Tilted", color='orange')
             ax.plot([1, 1.1585], label="Equal Weight", color='blue')
             ax.legend()
