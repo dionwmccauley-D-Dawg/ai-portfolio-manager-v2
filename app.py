@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 from polygon import RESTClient
 from datetime import datetime, timedelta
-import matplotlib.pyplot as plt
 import time
 
 st.set_page_config(page_title="AI Portfolio Manager - Grok", layout="wide")
@@ -55,10 +54,12 @@ if st.sidebar.button("Run Agent Simulation"):
             price_df = pd.DataFrame(prices).ffill().dropna(how='all')
             st.success(f"Live data loaded: {len(price_df)} days")
 
+            # Current prices for share calculation
+            current_prices = price_df.iloc[-1]
+
             # Momentum calculation
             sma = price_df.rolling(SMA_WINDOW).mean().iloc[-1]
-            current = price_df.iloc[-1]
-            signals = current > sma
+            signals = current_prices > sma
 
             # Apply aggressive tilt
             base_weight = 1.0 / len(TICKERS)
@@ -81,15 +82,31 @@ if st.sidebar.button("Run Agent Simulation"):
             total = sum(weights.values())
             weights = {k: v / total for k, v in weights.items()}
 
-            # Allocation table
+            # Calculate exact shares and leftover
+            shares = {}
+            invested = 0
+            for ticker in TICKERS:
+                price = current_prices[ticker]
+                amount = capital * weights[ticker]
+                share_count = np.floor(amount / price)  # whole shares only
+                shares[ticker] = int(share_count)
+                invested += share_count * price
+
+            leftover = capital - invested
+
+            # Display dynamic allocation with shares
             st.subheader("Dynamic Allocation (Momentum Tilted)")
             alloc_df = pd.DataFrame({
                 "Ticker": list(weights.keys()),
                 "Signal": ["Strong" if signals.get(t, False) else "Weak" for t in weights.keys()],
                 "Weight": [f"{w:.1%}" for w in weights.values()],
-                "Amount": [f"${capital * w:,.0f}" for w in weights.values()]
+                "Shares": [shares.get(t, 0) for t in weights.keys()],
+                "Amount Invested": [f"${shares.get(t, 0) * current_prices[t]:,.0f}" for t in weights.keys()]
             })
             st.table(alloc_df)
+
+            st.write(f"**Total Invested**: ${invested:,.0f}")
+            st.write(f"**Leftover Cash**: ${leftover:,.0f}")
 
             # Performance estimate
             daily_ret = price_df.pct_change().mean() * 252
@@ -102,16 +119,6 @@ if st.sidebar.button("Run Agent Simulation"):
             col1.metric("Expected Annual Return", f"{ann_ret:.1%}")
             col2.metric("Volatility", f"{ann_vol.mean():.1%}")
             col3.metric("Sharpe Ratio", f"{sharpe:.2f}")
-
-            # Backtest plot (displayed in app)
-            st.subheader("Backtest Comparison (Cumulative Growth of $1)")
-            fig, ax = plt.subplots(figsize=(10, 6))
-            # Placeholder lines - replace with real backtest data later
-            ax.plot([1, 1.1692], label="Momentum Tilted", color='orange')
-            ax.plot([1, 1.1585], label="Equal Weight", color='blue')
-            ax.legend()
-            ax.grid(True)
-            st.pyplot(fig)
 
             st.success("Agent simulation complete. Market monitored for rebalance.")
 
