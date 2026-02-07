@@ -83,7 +83,7 @@ if st.sidebar.button("Run Agent Simulation"):
             total = sum(weights.values())
             weights = {k: v / total for k, v in weights.items()}
 
-            # Calculate exact shares and leftover
+            # Calculate exact whole shares and leftover cash
             shares = {}
             invested = 0
             for ticker in TICKERS:
