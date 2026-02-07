@@ -9,7 +9,7 @@ import time
 st.title("Dashboard")
 st.markdown("Current portfolio allocation, momentum signals, and performance metrics.")
 
-# Inputs (shared via session state if needed later)
+# Inputs (can be moved to Settings page later)
 capital = st.number_input("Starting Capital ($)", min_value=1000, value=10000, step=1000)
 risk_level = st.selectbox("Risk Level", ["Safe", "Medium", "Aggressive"], index=1)
 
@@ -110,7 +110,7 @@ if st.button("Run Agent Simulation"):
             col2.metric("Volatility", f"{ann_vol.mean():.1%}")
             col3.metric("Sharpe Ratio", f"{sharpe:.2f}")
 
-            st.subheader("Backtest Comparison")
+            st.subheader("Backtest Comparison (Cumulative Growth of $1)")
             fig, ax = plt.subplots(figsize=(10, 6))
             ax.plot([1, 1.1692], label="Momentum Tilted", color='orange')
             ax.plot([1, 1.1585], label="Equal Weight", color='blue')
