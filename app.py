@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 from polygon import RESTClient
 from datetime import datetime, timedelta
+import matplotlib.pyplot as plt
 import time
 
 st.set_page_config(page_title="AI Portfolio Manager - Grok", layout="wide")
@@ -49,10 +50,10 @@ if st.sidebar.button("Run Agent Simulation"):
                 df['date'] = pd.to_datetime(df['timestamp'], unit='ms')
                 df.set_index('date', inplace=True)
                 prices[ticker] = df['close']
-                time.sleep(15)
+                time.sleep(20)  # Increased safety margin for free-tier rate limits
 
             price_df = pd.DataFrame(prices).ffill().dropna(how='all')
-            st.success(f"Live data loaded: {len(price_df)} days")
+            st.success(f"Live data loaded: {len(price_df)} days from {price_df.index[0].date()} to {price_df.index[-1].date()}")
 
             # Current prices for share calculation
             current_prices = price_df.iloc[-1]
@@ -124,7 +125,7 @@ if st.sidebar.button("Run Agent Simulation"):
             # Backtest plot (displayed)
             st.subheader("Backtest Comparison (Cumulative Growth of $1)")
             fig, ax = plt.subplots(figsize=(10, 6))
-            # Placeholder lines (upgrade to real data later)
+            # Placeholder lines (upgrade to real backtest later)
             ax.plot([1, 1.1692], label="Momentum Tilted", color='orange')
             ax.plot([1, 1.1585], label="Equal Weight", color='blue')
             ax.legend()
