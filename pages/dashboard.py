@@ -9,7 +9,7 @@ import time
 st.title("Dashboard")
 st.markdown("Current portfolio allocation, momentum signals, and performance metrics.")
 
-# Inputs (can be moved to Settings page later)
+# Inputs (shared via session state if needed later)
 capital = st.number_input("Starting Capital ($)", min_value=1000, value=10000, step=1000)
 risk_level = st.selectbox("Risk Level", ["Safe", "Medium", "Aggressive"], index=1)
 
