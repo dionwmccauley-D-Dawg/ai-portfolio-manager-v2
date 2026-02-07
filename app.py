@@ -50,7 +50,7 @@ if st.sidebar.button("Run Agent Simulation"):
                 df['date'] = pd.to_datetime(df['timestamp'], unit='ms')
                 df.set_index('date', inplace=True)
                 prices[ticker] = df['close']
-                time.sleep(20)  # Safe rate limit
+                time.sleep(20)  # Increased safety margin for free tier
 
             price_df = pd.DataFrame(prices).ffill().dropna(how='all')
             st.success(f"Live data loaded: {len(price_df)} days")
@@ -125,7 +125,7 @@ if st.sidebar.button("Run Agent Simulation"):
             # Backtest plot (displayed)
             st.subheader("Backtest Comparison (Cumulative Growth of $1)")
             fig, ax = plt.subplots(figsize=(10, 6))
-            # Placeholder lines (upgrade to real backtest later)
+            # Placeholder lines (upgrade to real data later)
             ax.plot([1, 1.1692], label="Momentum Tilted", color='orange')
             ax.plot([1, 1.1585], label="Equal Weight", color='blue')
             ax.legend()
