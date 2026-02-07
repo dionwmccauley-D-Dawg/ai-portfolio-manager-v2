@@ -50,10 +50,10 @@ if st.sidebar.button("Run Agent Simulation"):
                 df['date'] = pd.to_datetime(df['timestamp'], unit='ms')
                 df.set_index('date', inplace=True)
                 prices[ticker] = df['close']
-                time.sleep(20)  # Increased safety margin for free-tier rate limits
+                time.sleep(20)  # Safe rate limit
 
             price_df = pd.DataFrame(prices).ffill().dropna(how='all')
-            st.success(f"Live data loaded: {len(price_df)} days from {price_df.index[0].date()} to {price_df.index[-1].date()}")
+            st.success(f"Live data loaded: {len(price_df)} days")
 
             # Current prices for share calculation
             current_prices = price_df.iloc[-1]
