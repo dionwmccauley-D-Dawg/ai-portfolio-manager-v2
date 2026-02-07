@@ -55,14 +55,10 @@ if st.sidebar.button("Run Agent Simulation"):
             price_df = pd.DataFrame(prices).ffill().dropna(how='all')
             st.success(f"Live data loaded: {len(price_df)} days")
 
-            # Current prices for share calculation
             current_prices = price_df.iloc[-1]
-
-            # Momentum calculation
             sma = price_df.rolling(SMA_WINDOW).mean().iloc[-1]
             signals = current_prices > sma
 
-            # Apply aggressive tilt
             base_weight = 1.0 / len(TICKERS)
             weights = {}
             equity_sum = 0
