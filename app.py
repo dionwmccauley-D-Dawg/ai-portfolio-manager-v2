@@ -50,7 +50,7 @@ if st.sidebar.button("Run Agent Simulation"):
                 df['date'] = pd.to_datetime(df['timestamp'], unit='ms')
                 df.set_index('date', inplace=True)
                 prices[ticker] = df['close']
-                time.sleep(20)  # Safe rate limit
+                time.sleep(20)
 
             price_df = pd.DataFrame(prices).ffill().dropna(how='all')
             st.success(f"Live data loaded: {len(price_df)} days")
