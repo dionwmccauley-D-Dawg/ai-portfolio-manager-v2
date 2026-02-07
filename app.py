@@ -50,7 +50,7 @@ if st.sidebar.button("Run Agent Simulation"):
                 df['date'] = pd.to_datetime(df['timestamp'], unit='ms')
                 df.set_index('date', inplace=True)
                 prices[ticker] = df['close']
-                time.sleep(20)
+                time.sleep(20)  # Safe rate limit
 
             price_df = pd.DataFrame(prices).ffill().dropna(how='all')
             st.success(f"Live data loaded: {len(price_df)} days")
@@ -85,7 +85,7 @@ if st.sidebar.button("Run Agent Simulation"):
             for ticker in TICKERS:
                 price = current_prices[ticker]
                 amount = capital * weights[ticker]
-                share_count = np.floor(amount / price)
+                share_count = np.floor(amount / price)  # whole shares only
                 shares[ticker] = int(share_count)
                 invested += share_count * price
 
